@@ -561,6 +561,9 @@ write.table(dat3, "c.txt", quote = F, row.names = F, sep = "\t")
 
 # file 'c.txt" has a full list of hits, and the frequency of cell types its occurs
 
+dt <- read.table("c.txt", header = T)
+hist(dt$Freq, xlab="Number of Cells", main="eQTL present in number of cell types")
+
 
 
 
