@@ -6,7 +6,9 @@
 
 # We are using the data stores in the RSB FlashHeart supercomputer (@130.56.33.253) throught the Terminal
 #If you have the storage space, you can do this in your computer
-# Log in,  use these Bash codes:
+
+# Go to Terminal
+# Log in to Flashheart
 cd /home/adamr/single_cell/eQTL_results/ # change directory
 ls -ltrh #list files by date
 R #go to R
