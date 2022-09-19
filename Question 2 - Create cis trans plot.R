@@ -1,6 +1,6 @@
 # Goal: create a plot where x axis is gene location and y axis in hit/SNP location.
 
-# what we need:
+# What we need:
 # list of hits
 # gene locations
 # a way to plot continuous variable (base pair) nested within an ordered categorical vairalbe (chr)
@@ -193,16 +193,10 @@ ggplot(d, aes(x = bp_flat, y = gbp_flat))+
     ylab("Expressed Gene Chromossomic Start Location") + xlab ("eQTL Chromossomic Location") + 
     ggtitle ("Cis-trans regulatory locations by cell-type")+ theme_bw()
   
-
 # save.image(p,file = "Cis trans plots per cell type.jpeg")
 
 
 # All cell types together plot#####
-# ggplot (d, aes (x = bp_flat, y = gbp_flat)) + 
-#   stat_binhex (bins=10, aes (alpha = ..count..)) + 
-#    facet_wrap (. ~ cell_type, shrink = T)
-# 
-
 plot_AllCellT <- ggplot(d, aes(y = gbp_flat,
                                x = bp_flat)) +
   geom_pointdensity() +
