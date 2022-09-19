@@ -562,10 +562,19 @@ write.table(dat3, "c.txt", quote = F, row.names = F, sep = "\t")
 # file 'c.txt" has a full list of hits, and the frequency of cell types its occurs
 
 dt <- read.table("c.txt", header = T)
-hist(dt$Freq, xlab="Number of Cells", main="eQTL present in number of cell types")
 
-
-
-
-
+library(ggplot2)
+ggplot(dt, aes(x=Freq)) +
+  geom_histogram(position="identity", alpha=0.5,bins = 14,color = 'darkgrey', fill = NA)+ #,color = 'black', fill = NA
+  geom_density(alpha=0.2)+
+  geom_vline(data=dt, aes(xintercept=median(Freq)),color="purple",
+             linetype="dashed")+
+  geom_vline(data=dt, aes(xintercept=mean(Freq),color="grey"),
+             linetype="dashed", show.legend=TRUE)+
+  scale_color_manual(name = "Statistics", values = c(Median = "purple", Mean = "grey"))+ #adds legend
+  stat_bin(binwidth=1, geom="text", aes(label=after_stat(count)), vjust=0)+ #adds txt/freq on each bar
+  scale_x_continuous(breaks = seq(1,14, by = 1)) + #adds all values of x
+  labs(title="Histogram of how many cell-types a hit is found",x="Count of cell-types", y = "Frequency")+
+  theme_classic() 
+#The logic here is: 14,843 hits (very significant eQTLs) were only found in one type of cells..
 
