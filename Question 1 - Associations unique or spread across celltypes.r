@@ -1,7 +1,5 @@
 
 
-
-
 dt <- read.table("c.txt", header = T)
 hist(dt$Freq, xlab="Number of Cells", main="eQTL present in number of cell types")
 
