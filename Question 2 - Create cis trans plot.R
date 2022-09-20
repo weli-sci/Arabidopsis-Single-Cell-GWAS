@@ -133,6 +133,11 @@ library(gridExtra)
 levels(d$cell_type)
 table(d$cell_type)
 
+summary(d)
+
+write.csv(d, "d.csv", row.names = F)
+d<-read.csv("d.csv", header = T)
+
 plotsvec<-vector("list",length=length(unique(d$cell_type)))
 for (i in unique(d$cell_type)) {   #could also use levels(d$cell_type) as it is a factor
   p<-ggplot(d[d$cell_type==i,], aes(x = bp_flat, y = gbp_flat))+

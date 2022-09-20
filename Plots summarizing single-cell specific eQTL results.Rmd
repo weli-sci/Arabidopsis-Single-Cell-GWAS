@@ -1,0 +1,129 @@
+---
+Title: "Plots summarizing single-cell specific eQTL results"
+Output: (1) a histogram showing how specific eQTL associations are, adn (2) scatterplots showing cis-and transregulatory regions
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Questions
+
+These R markdown codes require the data files "c.txt" and "d.csv", provided. Codes to generate these files are provided in the two R scripts listed. Here, we show plots that summarize results for these questions:
+
+(1) Are eQTLs (gene-expressed gene associations) specific to particular cell types or shared across cell types?
+
+(2) Are most of these association in cis or trans-regulatory locations?
+
+### (1) Histogram code
+
+```{r}
+dt <- read.table("c.txt", header = T)
+
+library(ggplot2)
+
+hist_ctype<-ggplot(dt, aes(x=Freq)) +
+  geom_histogram(position="identity", alpha=0.5,bins = 10,color = 'darkgrey', fill = NA)+ #,color = 'black', fill = NA
+  geom_density(alpha=0.2)+
+  geom_vline(data=dt, aes(xintercept=median(Freq)),color="purple",
+             linetype="dashed")+
+  geom_vline(data=dt, aes(xintercept=mean(Freq),color="grey"),
+             linetype="dashed", show.legend=TRUE)+
+  scale_color_manual(name = "Statistics", values = c(Median = "purple", Mean = "grey"))+ #adds legend
+  stat_bin(binwidth=1, geom="text", aes(label=after_stat(count)), vjust=0)+ #adds txt/freq on each bar
+  scale_x_continuous(breaks = seq(1,14, by = 1)) + #adds all values of x
+  labs(title="Histogram of how many cell-types a hit is found",x="Count of cell-types", y = "Frequency")+
+  theme_classic() 
+```
+
+##### Plot
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(hist_ctype)
+```
+
+### (2) Scatterplot - results for each cell type on multiple pages
+
+```{r}
+d<-read.csv("d.csv", header = T)
+
+library(ggplot2)
+
+plotsvec<-vector("list",length=length(unique(d$cell_type)))
+for (i in unique(d$cell_type)) {   #could also use levels(d$cell_type) as it is a factor
+  p<-ggplot(d[d$cell_type==i,], aes(x = bp_flat, y = gbp_flat))+
+    geom_pointdensity(na.rm = T) +
+    scale_color_viridis(direction = 1, alpha = 0.35,option = "H")+
+    geom_vline(aes(xintercept = length_flat), data = gChr_lengths,na.rm = T) +
+    scale_y_continuous(breaks = axis_coordgChr,
+                       labels = gChr_lengths$gChr,
+                       limits = c(0, max(gChr_lengths$length_flat))) +
+    scale_x_continuous(breaks = axis_coordChr,
+                       labels = Chr_lengths$Chr,
+                       limits = c(0, max(Chr_lengths$length_flat))) +
+    ylab("Expressed Gene Chromossomic Start Location") + xlab ("eQTL Chromossomic Location") + 
+    ggtitle (i)+ theme_bw()
+  
+  plotsvec[[i]]<-p
+}
+plotsvec[1:15]<-NULL #because it was adding 15 extra NULL lists int he beginning for some reason
+summary(plotsvec)
+
+
+```
+
+##### Plot
+
+```{r pressure, echo=FALSE}
+plotsvec 
+```
+
+### (2) Scatterplot - results for each cell type on a single panel
+
+```{r}
+
+# Facet wrap####
+library(ggplot2)
+p<-ggplot(d, aes(x = bp_flat, y = gbp_flat))+
+    facet_wrap(cell_type ~ .,scales = "free", ncol = 3)+ #this separate plots by cell types, facet_wrap is used for a variable with many levels
+    geom_pointdensity() +
+    scale_color_viridis(direction = 1, alpha = 0.35,option = "H")+
+    geom_vline(aes(xintercept = length_flat), data = gChr_lengths) +
+    scale_y_continuous(breaks = axis_coordgChr,
+                       labels = gChr_lengths$gChr,
+                       limits = c(0, max(gChr_lengths$length_flat))) +
+    scale_x_continuous(breaks = axis_coordChr,
+                       labels = Chr_lengths$Chr,
+                       limits = c(0, max(Chr_lengths$length_flat))) +
+    ylab("Expressed Gene Chromossomic Start Location") + xlab ("eQTL Chromossomic Location") + 
+    ggtitle ("Cis-trans regulatory locations by cell-type")+ theme_bw()
+  
+ # Density of associations across cell types (visualysing the count (density) of dots inside hexagonal areas)
+p2<-ggplot(d, aes(x = bp_flat, y = gbp_flat))+
+    facet_wrap(cell_type ~ .,scales = "free", ncol = 3)+ #this separate plots by cell types, facet_wrap is used for a variable with many levels
+  geom_hex (bins=3, aes(alpha= ..count..))+
+  # scale_color_viridis(direction = 1, alpha = 0.35,option = "H")+
+    geom_vline(aes(xintercept = length_flat), data = gChr_lengths) +
+    scale_y_continuous(breaks = axis_coordgChr,
+                       labels = gChr_lengths$gChr,
+                       limits = c(0, max(gChr_lengths$length_flat))) +
+    scale_x_continuous(breaks = axis_coordChr,
+                       labels = Chr_lengths$Chr,
+                       limits = c(0, max(Chr_lengths$length_flat))) +
+    ylab("Expressed Gene Chromossomic Start Location") + xlab ("eQTL Chromossomic Location") + 
+    ggtitle ("Cis-trans regulatory locations by cell-type")+ theme_bw()
+
+```
+
+```{r pressure, echo=FALSE}
+#Facet wrap - within cell-type patters
+plot(p) 
+
+```
+
+```{r pressure, echo=FALSE}
+#Density of dots across all cell types
+plot(p2)
+```
