@@ -1,6 +1,12 @@
 ---
 Title: "Plots summarizing single-cell specific eQTL results"
-Output: (1) a histogram showing how specific eQTL associations are, adn (2) scatterplots showing cis-and transregulatory regions
+Output: "(1) a histogram showing how specific eQTL associations are, adn (2) scatterplots
+  showing cis-and transregulatory regions"
+output:
+  html_document:
+    df_print: paged
+  pdf_document: default
+  word_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -21,6 +27,9 @@ These R markdown codes require the data files "c.txt" and "d.csv", provided. Cod
 dt <- read.table("c.txt", header = T)
 
 library(ggplot2)
+library(viridis)
+library(ggpointdensity)
+library(gridExtra)
 
 hist_ctype<-ggplot(dt, aes(x=Freq)) +
   geom_histogram(position="identity", alpha=0.5,bins = 10,color = 'darkgrey', fill = NA)+ #,color = 'black', fill = NA
@@ -86,6 +95,8 @@ plotsvec
 
 # Facet wrap####
 library(ggplot2)
+library(ggpointdensity)
+
 p<-ggplot(d, aes(x = bp_flat, y = gbp_flat))+
     facet_wrap(cell_type ~ .,scales = "free", ncol = 3)+ #this separate plots by cell types, facet_wrap is used for a variable with many levels
     geom_pointdensity() +
