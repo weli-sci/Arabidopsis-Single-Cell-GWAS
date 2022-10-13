@@ -50,7 +50,7 @@ hist_ctype<-ggplot(dt, aes(x=Freq)) +
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-plot(hist_ctype)
+plot(hist_ctype) 
 ```
 
 ### (2) Scatterplot - results for each cell type on multiple pages
