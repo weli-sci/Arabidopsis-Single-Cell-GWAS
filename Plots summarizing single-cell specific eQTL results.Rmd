@@ -29,7 +29,7 @@ dt <- read.table("c.txt", header = T)
 library(ggplot2)
 library(viridis)
 library(ggpointdensity)
-library(gridExtra)
+library(gridExtra) 
 
 hist_ctype<-ggplot(dt, aes(x=Freq)) +
   geom_histogram(position="identity", alpha=0.5,bins = 10,color = 'darkgrey', fill = NA)+ #,color = 'black', fill = NA
